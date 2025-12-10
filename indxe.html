@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赫莉美學 | 保養商品專區</title>
+    <style>
+        /* --- 基礎設定 --- */
+        :root {
+            --primary-color: #d4a373;
+            --secondary-color: #faeadd;
+            --text-color: #555;
+            --white: #ffffff;
+            --highlight-color: #f9f5f2;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fcfcfc;
+            color: var(--text-color);
+            line-height: 1.5;
+            padding-bottom: 40px;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- 頁首 --- */
+        header {
+            background: var(--white);
+            text-align: center;
+            padding: 1rem 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* --- 商店資訊區塊 --- */
+        .store-header {
+            text-align: center;
+            padding: 2.5rem 1rem 1.5rem 1rem;
+            background-color: #fff;
+        }
+        .store-subtitle {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--primary-color);
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .store-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin: 0 0 1rem 0;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 8px;
+        }
+        .store-title::after {
+            content: '';
+            display: block;
+            width: 30px;
+            height: 2px;
+            background-color: var(--primary-color);
+            margin: 8px auto 0;
+        }
+        .store-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem 0;
+            color: #666;
+            font-size: 0.85rem;
+            line-height: 1.8;
+        }
+        .store-info-box {
+            display: inline-block;
+            background-color: var(--highlight-color);
+            padding: 12px 25px;
+            border-radius: 6px;
+            color: #666;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        .store-info-box p {
+            margin: 4px 0;
+        }
+
+        /* --- 分頁切換按鈕 --- */
+        .tabs-container {
+            display: flex;
+            justify-content: center;
+            background: var(--white);
+            padding: 0;
+            border-bottom: 1px solid #f0f0f0;
+            margin-top: 10px;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+            color: #999;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+        .tab-btn.active {
+            color: #333;
+            font-weight: 500;
+        }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        /* --- 內容區塊 --- */
+        .container {
+            width: 92%;
+            max-width: 800px;
+            margin: 1.5rem auto;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* RICA 分頁至頂說明文字 */
+        .rica-intro {
+            text-align: center;
+            margin: 0 auto 1.5rem auto;
+            padding: 1.2rem;
+            background-color: #fff;
+            border-radius: 0;
+            color: #777;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .category-title {
+            text-align: center;
+            margin: 2.5rem 0 1.2rem 0;
+            font-size: 1.1rem;
+            color: #333;
+            letter-spacing: 2px;
+            position: relative;
+        }
+        .category-title::before { content: '— '; color: var(--primary-color); }
+        .category-title::after { content: ' —'; color: var(--primary-color); }
+
+        /* --- 產品列表 --- */
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+            gap: 15px;
+        }
+        @media (min-width: 768px) {
+            .product-list {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 25px;
+            }
+        }
+
+        /* --- 產品卡片 --- */
+        .product-card {
+            background: var(--white);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: none;
+            border: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+        }
+        
+        /* 封面滑動功能樣式 */
+        .card-slider-container {
+            width: 100%;
+            aspect-ratio: 1/1;
+            overflow-x: auto;
+            display: flex;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+        .card-slider-container::-webkit-scrollbar { 
+            display: none;
+        }
+        .card-slider-img {
+            flex: 0 0 100%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            scroll-snap-align: start;
+        }
+
+        .card-img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            background: #f9f9f9;
+        }
+
+        .card-body {
+            padding: 12px 8px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card-title {
+            font-size: 0.9rem;
+            margin: 4px 0;
+            color: #333;
+            line-height: 1.35;
+            min-height: 2.7em;
+            letter-spacing: 0.5px;
+        }
+        .card-price {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-top: 6px;
+            font-family: "Helvetica Neue", sans-serif;
+        }
+        .view-more {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-top: 6px;
+            display: block;
+            letter-spacing: 1px;
+        }
+
+        /* --- 彈出視窗 (Modal) [已調整更小] --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.95);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: var(--white);
+            width: 100%;
+            max-width: 360px; /* 寬度縮小到 360px */
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            animation: popUp 0.3s ease;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
+        }
+        @keyframes popUp {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.05);
+            color: #333;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1.2rem;
+            line-height: 30px;
+            text-align: center;
+        }
+        .modal-img {
+            width: 100%;
+            height: auto;
+            max-height: 280px; /* 圖片高度限制縮小，避免佔滿螢幕 */
+            object-fit: contain;
+            background: #fff;
+            display: block;
+            margin: 0 auto;
+        }
+        .modal-body {
+            padding: 15px 20px 20px 20px; /* 內距縮小 */
+        }
+        .modal-title {
+            font-size: 1.25rem; /* 標題稍微縮小 */
+            margin: 0 0 8px 0;
+            color: #222;
+            letter-spacing: 1px;
+        }
+        .modal-tag {
+            display: inline-block;
+            background: #f4f4f4;
+            color: #666;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-right: 5px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .modal-desc {
+            color: #555;
+            line-height: 1.6; /* 行距微調 */
+            margin-bottom: 15px;
+            text-align: justify;
+            font-size: 0.9rem;
+        }
+        .modal-desc img {
+            width: 100%; /* 確保內容圖片撐滿寬度 */
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin-top: 12px;
+            margin-bottom: 12px;
+        }
+        .modal-desc strong {
+            color: #d4a373;
+            font-weight: 600;
+            display: block;
+            margin-top: 12px;
+            font-size: 0.95rem;
+        }
+        .modal-desc ul {
+            padding-left: 18px;
+            margin: 4px 0;
+        }
+        .modal-desc li {
+            margin-bottom: 4px;
+        }
+        .highlight-box {
+            background-color: var(--highlight-color);
+            padding: 5px 10px;
+            border-radius: 4px;
+            color: #333;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .modal-price {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 12px;
+            line-height: 1.4;
+            letter-spacing: 0.5px;
+        }
+        .modal-action {
+            display: block;
+            width: 100%;
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            transition: background 0.3s;
+        }
+        .modal-action:hover {
+            background: var(--primary-color);
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">HERI STUDIO</div>
+    </header>
+
+    <div class="store-header">
+        <span class="store-subtitle">HERI STUDIO SELECTION</span>
+        <h1 class="store-title">赫莉美學｜保養商品專區</h1>
+        
+        <ul class="store-features">
+            <li>• 原廠正品現貨供應</li>
+            <li>• RICA 正式簽約店家</li>
+            <li>• CINDY CHEN 官方授權代理</li>
+        </ul>
+        
+        <div class="store-info-box">
+            <p>付款方式：現金、轉帳</p>
+            <p>取貨方式：來店自取、超商店到店（滿$2000免運）</p>
+        </div>
+    </div>
+
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('eyelash')">睫毛保養品</button>
+        <button class="tab-btn" onclick="switchTab('rica')">RICA保養產品</button>
+    </div>
+
+    <div class="container">
+        
+        <div id="eyelash" class="tab-content active">
+            <div class="product-list">
+                <div class="product-card" onclick="openModal('raincoat_b5')">
+                    <div class="card-slider-container">
+                        <img src="https://i.postimg.cc/V6sN68Vn/IMG-6720.png" class="card-slider-img" alt="睫毛雨衣封面1">
+                        <img src="https://i.postimg.cc/3wFRYRnM/IMG-6715.png" class="card-slider-img" alt="睫毛雨衣封面2">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">睫毛膠原賦活精粹雨衣B5+</h3>
+                        <div class="card-price">NT$ 620</div>
+                        <span class="view-more">查看詳情</span>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="openModal('raincoat_black')">
+                    <img src="https://i.postimg.cc/2j2037VV/IMG-6717.png" class="card-img" alt="瞬翹黑雨衣">
+                    <div class="card-body">
+                        <h3 class="card-title">歐美睫毛瞬翹黑雨衣</h3>
+                        <div class="card-price">NT$ 760</div>
+                        <span class="view-more">查看詳情</span>
+                    </div>
+                </div>
+                
+                <div class="product-card" onclick="openModal('serum_plus')">
+                    <div class="card-slider-container">
+                        <img src="https://i.postimg.cc/tJb2P1yL/IMG-6716.png" class="card-slider-img" alt="滋養液封面1">
+                        <img src="https://i.postimg.cc/ZnmV394n/IMG-6719.png" class="card-slider-img" alt="滋養液封面2">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">植萃睫毛滋養液PLUS</h3>
+                        <div class="card-price">NT$ 950</div>
+                        <span class="view-more">查看詳情</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="rica" class="tab-content">
+            
+            <div class="rica-intro">
+                RICA、易美潔<br>
+                全系列髮品、保養品皆有販售<br>
+                其餘商品請私訊官方賴
+            </div>
+
+            <h3 class="category-title">柔嫩去角質</h3>
+            <div class="product-list">
+                
+                <div class="product-card" onclick="openModal('rica_scrub_aha')">
+                    <img src="https://i.postimg.cc/HWh9bMhX/IMG-6755.webp" class="card-img" alt="果酸角質霜">
+                    <div class="card-body">
+                        <h3 class="card-title">西西里果酸角質霜</h3>
+                        <div class="card-price">NT$ 1,800</div>
+                        <span class="view-more">查看詳情</span>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="openModal('rica_scrub_vol')">
+                    <div class="card-slider-container">
+                        <img src="https://i.postimg.cc/RCDLwtDL/IMG-6756.webp" class="card-slider-img" alt="火山石封面1">
+                        <img src="https://i.postimg.cc/Y2szQFsx/IMG-6757.webp" class="card-slider-img" alt="火山石封面2">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">火山石角質霜</h3>
+                        <div class="card-price">NT$ 1,200 起</div>
+                        <span class="view-more">查看詳情</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="category-title">頂級保濕乳液</h3>
+            <div class="product-list">
+                
+                <div class="product-card" onclick="openModal('rica_lotion_argan')">
+                    <div class="card-slider-container">
+                        <img src="https://i.postimg.cc/6Ts6z07b/IMG-6676.webp" class="card-slider-img" alt="堅果油封面1">
+                        <img src="https://i.postimg.cc/Y2v1nCGF/IMG-6677.jpg" class="card-slider-img" alt="堅果油封面2">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">頂級堅果油保濕乳液</h3>
+                        <div class="card-price">NT$ 1,800 起</div>
+                        <span class="view-more">查看詳情</span>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="openModal('rica_lotion_charcoal')">
+                    <img src="https://i.postimg.cc/Df51w499/IMG-6696.webp" class="card-img" alt="竹炭乳液">
+                    <div class="card-body">
+                        <h3 class="card-title">黑旋風竹炭乳液</h3>
+                        <div class="card-price">NT$ 2,800</div>
+                        <span class="view-more">查看詳情</span>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="openModal('rica_lotion_opuntia')">
+                    <img src="https://i.postimg.cc/dQ9jZxCv/IMG-6690.jpg" class="card-img" alt="仙人掌水乳液">
+                    <div class="card-body">
+                        <h3 class="card-title">梨果仙人掌水乳液</h3>
+                        <div class="card-price">NT$ 2,800</div>
+                        <span class="view-more">查看詳情</span>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="openModal('rica_lotion_mineral')">
+                    <img src="https://i.postimg.cc/L5vkdJSY/IMG-6687.jpg" class="card-img" alt="西西里水乳液">
+                    <div class="card-body">
+                        <h3 class="card-title">西西里礦質奢華水乳液</h3>
+                        <div class="card-price">NT$ 2,800</div>
+                        <span class="view-more">查看詳情</span>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="openModal('rica_lotion_coconut')">
+                    <img src="https://i.postimg.cc/TYYqVJjv/IMG-6691.jpg" class="card-img" alt="椰奶水乳液">
+                    <div class="card-body">
+                        <h3 class="card-title">椰奶特潤水乳液</h3>
+                        <div class="card-price">NT$ 2,800</div>
+                        <span class="view-more">查看詳情</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="category-title">特殊機能護理</h3>
+            <div class="product-list">
+                 <div class="product-card" onclick="openModal('rica_special_avocado')">
+                    <img src="https://i.postimg.cc/ZqQj57Cf/IMG-6703.jpg" class="card-img" alt="抑毛精華">
+                    <div class="card-body">
+                        <h3 class="card-title">酪梨奶油抑毛精華</h3>
+                        <div class="card-price">NT$ 1,850</div>
+                        <span class="view-more">查看詳情</span>
+                    </div>
+                </div>
+                <div class="product-card" onclick="openModal('rica_special_oil')">
+                    <img src="https://i.postimg.cc/7PWnSzWQ/IMG-6759.webp" class="card-img" alt="仙人掌油">
+                    <div class="card-body">
+                        <h3 class="card-title">梨果仙人掌油</h3>
+                        <div class="card-price">NT$ 1,500 起</div>
+                        <span class="view-more">查看詳情</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal-overlay" id="productModal" onclick="closeModal(event)">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <img src="" id="modalImg" class="modal-img">
+            <div class="modal-body">
+                <div id="modalTag" style="margin-bottom: 10px;"></div>
+                <h2 class="modal-title" id="modalTitle">產品名稱</h2>
+                <div class="modal-desc" id="modalDesc"></div>
+                <div class="modal-price" id="modalPrice">NT$ 0</div>
+                <a href="https://reurl.cc/vdvqVa" target="_blank" class="modal-action">我想詢問 / 購買</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 產品資料庫 ---
+        // 共用的成分介紹文字 (四款乳液統一使用)
+        // 更新了底部的質地與成分圖片
+        const commonIngredients = `
+            <strong>✨ 黃金比例・奢華植萃成分：</strong><br>
+            <ul>
+                <li><strong>紫草萃取</strong>：富含豐富尿囊素，具有對肌膚極佳的治癒力，同時緩解皮膚乾燥問題。</li>
+                <li><strong>假葉樹根萃取</strong>：豐富類黃酮及甘醇酸，能舒緩肌膚泛紅不適，增強皮膚新陳代謝。</li>
+                <li><strong>墨角藻萃取</strong>：富含多種維生素幫助肌膚保濕、補水及維持肌膚屏障，提高肌膚抗氧力。</li>
+                <li><strong>維他命 E</strong>：提升肌膚防禦力，緩解日曬、壓力、空汙傷害，並增加肌膚彈性和光澤。</li>
+            </ul>
+            <br>
+            <img src="https://i.postimg.cc/59Xw72Y6/IMG-6680.webp" alt="乳液質地">
+            <img src="https://i.postimg.cc/xqrjgRJ0/IMG-6681.webp" alt="成分介紹">
+        `;
+
+        const products = {
+            // === 睫毛產品 ===
+            'raincoat_b5': {
+                title: '睫毛膠原賦活精粹雨衣 B5+',
+                tag: '', 
+                price: 'NT$ 620',
+                img: 'https://i.postimg.cc/V6sN68Vn/IMG-6720.png',
+                desc: `
+                    <span class="highlight-box">輕盈透明不厚重・新版金頭小圓頭設計</span><br>
+                    專為嫁接、睫毛管理設計，配方大升級！偏精華液的稠感質地，修復成分再升級！適用於一般日常上妝維持妝容，更可以維持捲翹持久。角蛋白及嫁接睫毛建議可以直接使用唷～<br><br>
+                    
+                    <strong>✨ 產品特色：</strong><br>
+                    <ul>
+                        <li><strong>🌿 天然植萃添加</strong>：全膚質皆可使用，溫和不刺激。</li>
+                        <li><strong>💧 維生素B5增量</strong>：長效保濕不間斷，提升睫毛柔軟度與光澤。</li>
+                        <li><strong>🌱 南非復活草</strong>：滋養修護，強化屏障，維持睫毛捲翹持久。</li>
+                        <li><strong>⚪ 特殊球狀刷頭</strong>：提升吸收達到更好效果，使用簡單，吸收更均勻。</li>
+                        <li><strong>👁️ 睫毛管理/嫁接皆可</strong>：全程 MIT 研發、監督、製作把關安心看的見，專業美睫師共同研發。</li>
+                    </ul>
+                    <br>
+                    <strong>💡 關鍵成分功效：</strong><br>
+                    <ul>
+                        <li><strong>維生素 B5</strong>：增加皮膚防禦力，修復泛紅，淡化細紋，達到修護與舒緩的效果。</li>
+                        <li><strong>膠原蛋白</strong>：具有支撐、保水功能，改善皮膚含水量，減少粗糙，讓皮膚澎潤光滑，減少倦容感。</li>
+                        <li><strong>南非復活草</strong>：修護角質層、強化屏障、修護敏感肌膚，增加睫毛捲翹度的時間。</li>
+                        <li><strong>強韌睫毛</strong>：使睫毛更健康強韌。</li>
+                    </ul>
+                `
+            },
+            'raincoat_black': {
+                title: '歐美睫毛瞬翹黑雨衣',
+                tag: '<span class="modal-tag">溫水可卸</span><span class="modal-tag">嫁接可用</span><span class="modal-tag">濃黑捲翹</span>',
+                price: 'NT$ 760',
+                img: 'https://i.postimg.cc/2j2037VV/IMG-6717.png',
+                desc: `
+                    <strong>全台首創黑雨衣，一次擁有濃、黑、翹！</strong><br>
+                    不須專用卸妝品，一般洗臉即可輕鬆卸除。<br><br>
+
+                    <strong>✨ 產品特色：</strong><br>
+                    <ul>
+                        <li><strong>MIT 研發製程</strong>：經 FDA 登陸核准獨家成分，全程 MIT 研發、監督、製作把關安心看得見。</li>
+                        <li><strong>天然植萃添加</strong>：無負擔，全膚質皆可使用。</li>
+                        <li><strong>彎月形刷頭</strong>：專為各種眼型設計，反覆刷也不結塊。</li>
+                        <li><strong>適用對象廣</strong>：角蛋白、嫁接睫毛者皆可使用，變身成為黑雨衣。</li>
+                    </ul>
+                    <br>
+                    <strong>🌿 三大修護成分：</strong><br>
+                    <ul>
+                        <li><strong>膠原蛋白</strong>：鎖水保濕、賦予韌性。</li>
+                        <li><strong>維生素 B5</strong>：形成保護膜、維持水分、舒緩修護。</li>
+                        <li><strong>南非復活草</strong>：修護滋養，維持睫毛捲翹持久。</li>
+                    </ul>
+                `
+            },
+            'serum_plus': {
+                title: '植萃睫毛滋養液 PLUS',
+                tag: '', 
+                price: 'NT$ 950',
+                img: 'https://i.postimg.cc/tJb2P1yL/IMG-6716.png',
+                desc: `
+                    <strong>天然植萃精華，溫和滋潤睫毛</strong><br>
+                    專為睫毛設計的日常保養，捲翹定型，濃黑捲翹，讓睫毛維持健康光澤。<br><br>
+                    
+                    <strong>✨ 產品特色：</strong><br>
+                    <ul>
+                        <li><strong>🚫 不含比馬前列素</strong>：不會造成黑眼圈</li>
+                        <li><strong>🌿 天然植萃精華</strong>：具有天然保濕力，深入滲透睫毛纖維，減少乾燥與斷裂。</li>
+                        <li><strong>🍃 刺阿幹樹葉萃取</strong>：有效抵擋環境光害，維持睫毛健康。</li>
+                        <li><strong>👁️ 捲翹定型</strong>：日常養睫，濃黑捲翹。</li>
+                    </ul>
+                    <br>
+                    <img src="https://i.postimg.cc/ZnmV394n/IMG-6719.png" alt="使用示意圖">
+                    <br><br>
+                    <strong>💡 核心成分功效：</strong><br>
+                    <ul>
+                        <li><strong>甜菜鹼</strong>：天然保濕力，深入滲透睫毛纖維，減少乾燥與斷裂。</li>
+                        <li><strong>維生素原 B5</strong>：加強鎖水，提升睫毛柔韌度與光澤，預防脆弱斷裂。</li>
+                        <li><strong>CAPIXYL™ 肽複合物</strong>：活絡滋養睫毛根部，使睫毛更濃密強韌。</li>
+                        <li><strong>Kerascalp™ 餘甘子果萃取</strong>：強韌睫毛纖維，增加光澤與彈性。</li>
+                        <li><strong>膠原蛋白</strong>：鎖水保濕、賦予韌性。</li>
+                        <li><strong>南非復活草</strong>：修護滋養，維持睫毛捲翹持久。</li>
+                    </ul>
+                     <br>
+                    <strong>【CC 睫毛滋養液優勢】</strong><br>
+                    <ul>
+                        <li><strong>🌿 天然植物萃取</strong>：去除不必要的成份，留下最好的精華。</li>
+                        <li><strong>🌿 無動物實驗</strong>：不做任何動物性實驗，堅持使用乾淨成份。</li>
+                        <li><strong>🌿 無麩質</strong>：不含任何麩質或小麥蛋白質。</li>
+                        <li><strong>🌿 純素食</strong>：不添加任何動物衍生以最高標準用植物性成分製作。</li>
+                    </ul>
+                `
+            },
+
+            // === RICA 去角質 ===
+            'rica_scrub_aha': {
+                title: '西西里果酸角質霜',
+                tag: '<span class="modal-tag">全身・私密肌適用</span>',
+                price: '200ml / NT$ 1,800',
+                img: 'https://i.postimg.cc/HWh9bMhX/IMG-6755.webp',
+                desc: `
+                    <span class="highlight-box">免沖洗去角質，去角質+保濕一瓶搞定！</span><br><br>
+                    
+                    <strong>✨ 改善肌膚困擾：</strong><br>
+                    <ul>
+                        <li>改善粗糙顆粒</li>
+                        <li>防止內包毛</li>
+                        <li>拋光煥膚</li>
+                        <li>淡化暗沉</li>
+                    </ul>
+                    <br>
+                    <strong>🌿 關鍵成分：</strong><br>
+                    <ul>
+                        <li><strong>天然果酸 (AHA)</strong>：來自義大利西西里島水果萃取，溫和代謝老廢角質。</li>
+                        <li><strong>甜杏仁油</strong>：富含維他命E，抗氧化與舒緩，具極佳保濕滋潤效果。</li>
+                        <li><strong>赤鐵樹果脂</strong>：保濕並恢復屏障，不造成毛孔堵塞。</li>
+                        <li><strong>毛蕊花</strong>：地中海獨家成分，具生物發光功效，強化肌膚光澤。</li>
+                    </ul>
+                `
+            },
+            'rica_scrub_vol': {
+                title: '火山石角質霜',
+                tag: '<span class="modal-tag">臉部・頭皮・全身適用</span>',
+                price: '150ml / NT$ 1,200<br>1000ml / NT$ 3,600',
+                img: 'https://i.postimg.cc/RCDLwtDL/IMG-6756.webp',
+                // 更新了底部的圖片
+                desc: `
+                    不同於一般去角質，RICA 特別添加了珍貴的神經醯胺 (Ceramides)，其保濕力是玻尿酸的 16 倍，能有效修復肌膚屏障，讓去角質後的肌膚依然水潤、不乾澀、不緊繃。<br><br>
+                    
+                    <strong>🌿 頂級植萃成分：</strong><br>
+                    <ul>
+                        <li><strong>埃特納火山石</strong>：溫和細緻不刺激，有效深層潔淨肌膚、帶走髒污。</li>
+                        <li><strong>神經醯胺</strong>：強化皮膚屏障、鎖水保濕，減少乾燥和緊繃感。</li>
+                        <li><strong>刺山柑 & 迷迭香</strong>：抗氧化、抵禦汙染、延緩肌膚老化。</li>
+                        <li><strong>薄荷精油</strong>：調理油脂並舒緩肌膚，給予舒暢感受。</li>
+                        <li><strong>小麥蛋白</strong>：深入髮根保濕，使秀髮柔順有光澤。</li>
+                    </ul>
+                    <br>
+                    <strong>✨ 多功能使用方式：</strong><br>
+                    <ul>
+                        <li><strong>頭皮去角質</strong>：打溼後塗抹按摩 1-2 分鐘 (一週 1-2 次)。</li>
+                        <li><strong>身體去角質</strong>：針對粗糙部位畫圓按摩 (一週 1-2 次)。</li>
+                        <li><strong>頭髮潤絲</strong>：塗抹於髮絲按摩後洗淨。</li>
+                    </ul>
+                    <br>
+                    <img src="https://i.postimg.cc/zDcFThc2/IMG-6758.webp" alt="使用方法">
+                `
+            },
+
+            // === RICA 乳液 ===
+            'rica_lotion_argan': {
+                title: '頂級堅果油保濕乳液',
+                tag: `
+                    <span class="modal-tag">推薦給乾性肌膚</span>
+                    <span class="modal-tag">臉部/身體/私密肌皆適用</span>
+                    <span class="modal-tag">嚴選義大利天然成分，孕媽咪皆能安心使用</span>
+                `,
+                price: '250ml / NT$ 1,800<br>500ml / NT$ 2,800',
+                img: 'https://i.postimg.cc/6Ts6z07b/IMG-6676.webp',
+                desc: `
+                    散發淡淡的香甜氣味，凝乳質地輕柔不黏膩，富含維他命E與亞油酸成分，在維持肌膚水感柔潤的同時還能深層滋潤，帶給肌膚光澤透亮感與提升肌膚彈力。<br><br>
+                    ${commonIngredients}
+                `
+            },
+            'rica_lotion_charcoal': {
+                title: '黑旋風竹炭乳液',
+                tag: `
+                    <span class="modal-tag">推薦給中性肌膚</span>
+                    <span class="modal-tag">臉部/身體/私密肌皆適用</span>
+                    <span class="modal-tag">嚴選義大利天然成分，孕媽咪皆能安心使用</span>
+                `,
+                price: '500ml / NT$ 2,800',
+                img: 'https://i.postimg.cc/Df51w499/IMG-6696.webp',
+                desc: `
+                    採用植物炭，豐富維他命E，天然頂級成分有效使肌膚油水平衡並舒緩肌膚，提升肌膚防禦力。<br><br>
+                    ${commonIngredients}
+                `
+            },
+            'rica_lotion_opuntia': {
+                title: '梨果仙人掌水乳液',
+                tag: `
+                    <span class="modal-tag">推薦給中性肌膚</span>
+                    <span class="modal-tag">臉部/身體/私密肌皆適用</span>
+                    <span class="modal-tag">嚴選義大利天然成分，孕媽咪皆能安心使用</span>
+                `,
+                price: '500ml / NT$ 2,800',
+                img: 'https://i.postimg.cc/dQ9jZxCv/IMG-6690.jpg',
+                desc: `
+                    選用珍貴梨果仙人掌籽萃取成分，富含多種維生素與胺基酸，能深層的滋養並舒緩缺水肌膚，提升鎖水力與抗老功效。<br><br>
+                    ${commonIngredients}
+                `
+            },
+            'rica_lotion_mineral': {
+                title: '西西里礦質奢華水乳液',
+                tag: `
+                    <span class="modal-tag">推薦給乾性肌膚</span>
+                    <span class="modal-tag">臉部/身體/私密肌皆適用</span>
+                    <span class="modal-tag">嚴選義大利天然成分，孕媽咪皆能安心使用</span>
+                `,
+                price: '500ml / NT$ 2,800',
+                img: 'https://i.postimg.cc/L5vkdJSY/IMG-6687.jpg',
+                desc: `
+                    選用來自於火山的頂級西西里礦泥粉，內含豐富的維他命E以及微量的礦物元素，能促進肌膚修護力，並舒緩肌膚乾燥提升彈力與保濕力。<br><br>
+                    ${commonIngredients}
+                `
+            },
+            'rica_lotion_coconut': {
+                title: '椰奶特潤水乳液',
+                tag: `
+                    <span class="modal-tag">推薦給油性肌膚</span>
+                    <span class="modal-tag">臉部/身體/私密肌皆適用</span>
+                    <span class="modal-tag">嚴選義大利天然成分，孕媽咪皆能安心使用</span>
+                `,
+                price: '500ml / NT$ 2,800',
+                img: 'https://i.postimg.cc/TYYqVJjv/IMG-6691.jpg',
+                desc: `
+                    萃取自白椰子的果肉與椰子油，能有效的滋潤肌膚的同時平衡皮脂，快速吸收無黏膩感，給予肌膚舒適感受同時降低紫外線傷害。<br><br>
+                    ${commonIngredients}
+                `
+            },
+
+            // === RICA 特殊護理 ===
+            'rica_special_avocado': {
+                title: '酪梨奶油抑毛精華',
+                tag: `
+                    <span class="modal-tag">維持蠟後完美裸肌</span>
+                    <span class="modal-tag">所有膚質適用</span>
+                    <span class="modal-tag">嚴選義大利天然成分，孕媽咪皆能安心使用</span>
+                `,
+                price: '100ml / NT$ 1,850',
+                img: 'https://i.postimg.cc/ZqQj57Cf/IMG-6703.jpg',
+                desc: `
+                    首創的三合一高濃度精華，內含的天然木瓜酵素成分，能淡化暗沉與滋潤肌膚，木瓜酵素分泌出的分解蛋白質能減緩毛髮生長溫和維持美體沙龍功效，質地清爽又不油膩。<br><br>
+
+                    <strong>✨ 黃金比例・奢華植萃成分：</strong><br>
+                    <ul>
+                        <li><strong>酪梨萃取</strong>：富含維他命A、D、E，能淡化暗沈、滋潤肌膚。</li>
+                        <li><strong>木瓜酵素</strong>：可分解毛髮生長蛋白質。</li>
+                        <li><strong>薄荷萃取</strong>：能鎮靜肌膚。</li>
+                        <li><strong>蘆薈萃取</strong>：能減緩肌膚不適感、修護肌膚。</li>
+                    </ul>
+                `
+            },
+            'rica_special_oil': {
+                title: '梨果仙人掌油',
+                tag: '<span class="modal-tag">萬用神油・全髮質、膚質適用</span>',
+                price: '50ml / NT$ 1,500',
+                img: 'https://i.postimg.cc/7PWnSzWQ/IMG-6759.webp',
+                // 更新了底部的圖片
+                desc: `
+                    <strong>質地輕盈，瞬間撫平毛躁</strong><br>
+                    嚴選西西里梨果仙人掌籽，冷壓萃取。<br>
+                    無可匹敵的高營養價值，賦予頭髮健康光澤，修護髮尾分岔。<br><br>
+                    <strong>✨ 產品特點：</strong><br>
+                    <ul>
+                        <li><strong>質地輕盈好吸收</strong>：無厚重感，各種髮質皆能駕馭。</li>
+                        <li><strong>抵抗熱傷害</strong>：保護頭髮不受熱風吹整損傷。</li>
+                        <li><strong>一瓶可用全身</strong>：頭髮與身體皆可使用。</li>
+                    </ul><br>
+                    <img src="https://i.postimg.cc/gcTH3hT7/IMG-6760.webp" alt="5種使用時機">
+                `
+            }
+        };
+
+        // --- 功能程式碼 ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        const modal = document.getElementById('productModal');
+        const modalPrice = document.getElementById('modalPrice');
+        const modalDesc = document.getElementById('modalDesc');
+        const modalTag = document.getElementById('modalTag');
+
+        function openModal(productId) {
+            const data = products[productId];
+            if(!data) return;
+            document.getElementById('modalTitle').innerText = data.title;
+            modalTag.innerHTML = data.tag;
+            modalPrice.innerHTML = data.price;
+            modalDesc.innerHTML = data.desc;
+            document.getElementById('modalImg').src = data.img;
+            
+            document.getElementById('modalImg').onerror = function() {
+                this.src = 'https://via.placeholder.com/500?text=圖片準備中';
+            };
+
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(e) {
+            if (e.target === modal) closeModalDirect();
+        }
+
+        function closeModalDirect() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+</body>
+</html>
